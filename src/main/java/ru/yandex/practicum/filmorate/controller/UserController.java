@@ -30,7 +30,7 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    @ResponseBody
+
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
@@ -41,20 +41,18 @@ public class UserController {
         return user;
     }
 
-    @ResponseBody
+
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
-        if (user.getId() == null) {
-            user.setId(currentId + 1);
-        }
-        if (isValidUser(user)) {
-            users.put(user.getId(), user);
-            currentId++;
+        if (isContainsUser(user.getId()) == true) {
+            if (isValidUser(user)) {
+                users.put(user.getId(), user);
+                currentId++;
+            }
         }
         return user;
     }
-
 
     private boolean isValidUser(User user) {
         if (!user.getEmail().contains("@")) {
@@ -71,4 +69,9 @@ public class UserController {
         }
         return true;
     }
+
+    private boolean isContainsUser(int id) {
+        return users.containsKey(id);
+    }
+
 }

@@ -62,7 +62,7 @@ public class UserControllerTest {
 
     @Test
     public void shouldNoAddUserWhenUserLoginIsContainsSpaces() {
-        user.setLogin("Max Power");
+        user.setLogin("Daniil Shklyaev");
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
     }

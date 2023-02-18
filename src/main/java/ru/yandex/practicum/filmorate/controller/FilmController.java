@@ -29,7 +29,7 @@ public class FilmController {
         return new ArrayList<>(films.values());
     }
 
-    @ResponseBody
+
     @PostMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма с ID={}", currentId + 1);
@@ -40,16 +40,14 @@ public class FilmController {
         return film;
     }
 
-    @ResponseBody
     @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) {
         log.info("Получен PUT-запрос к эндпоинту: '/films' на обновление фильма с ID={}", film.getId());
-        if (film.getId() == null) {
-            film.setId(currentId + 1);
-        }
-        if (isValidFilm(film)) {
-            films.put(film.getId(), film);
-            currentId++;
+        if (isContainsFilm(film.getId()) == true) {
+            if (isValidFilm(film)) {
+                films.put(film.getId(), film);
+                currentId++;
+            }
         }
         return film;
     }
@@ -68,5 +66,9 @@ public class FilmController {
             throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
         }
         return true;
+    }
+
+    private boolean isContainsFilm(int id) {
+        return films.containsKey(id);
     }
 }
