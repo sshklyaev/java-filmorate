@@ -34,44 +34,24 @@ public class UserController {
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
-        if (isValidUser(user)) {
-            user.setId(++currentId);
-            users.put(user.getId(), user);
-        }
+        user.setId(++currentId);
+        users.put(user.getId(), user);
+
         return user;
     }
 
-
+    @ResponseBody
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
         if (isContainsUser(user.getId()) == true) {
-            if (isValidUser(user)) {
-                users.put(user.getId(), user);
-                currentId++;
-            }
+            users.put(user.getId(), user);
+            currentId++;
         }
         return user;
-    }
-
-    private boolean isValidUser(User user) {
-        if (!user.getEmail().contains("@")) {
-            throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
-        }
-        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
-            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
-        }
-        if (user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Некорректная дата рождения пользователя: " + user.getBirthday());
-        }
-        return true;
     }
 
     private boolean isContainsUser(int id) {
         return users.containsKey(id);
     }
-
 }

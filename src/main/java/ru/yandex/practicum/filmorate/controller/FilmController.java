@@ -33,10 +33,10 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма с ID={}", currentId + 1);
-        if (isValidFilm(film)) {
+
             film.setId(++currentId);
             films.put(film.getId(), film);
-        }
+
         return film;
     }
 
@@ -44,29 +44,14 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         log.info("Получен PUT-запрос к эндпоинту: '/films' на обновление фильма с ID={}", film.getId());
         if (isContainsFilm(film.getId()) == true) {
-            if (isValidFilm(film)) {
+
                 films.put(film.getId(), film);
                 currentId++;
-            }
+
         }
         return film;
     }
 
-    private boolean isValidFilm(Film film) {
-        if (film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не должно быть пустым!");
-        }
-        if ((film.getDescription().length()) > 200 || (film.getDescription().isEmpty())) {
-            throw new ValidationException("Описание фильма больше 200 символов или пустое: " + film.getDescription().length());
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
-        }
-        return true;
-    }
 
     private boolean isContainsFilm(int id) {
         return films.containsKey(id);
