@@ -34,8 +34,10 @@ public class UserController {
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
-        user.setId(++currentId);
-        users.put(user.getId(), user);
+        if (isValidUser(user)) {
+            user.setId(++currentId);
+            users.put(user.getId(), user);
+        }
 
         return user;
     }
@@ -44,14 +46,24 @@ public class UserController {
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
-        if (isContainsUser(user.getId()) == true) {
-            users.put(user.getId(), user);
-            currentId++;
+        if (user.getId() == null) {
+            throw new ValidationException("Передан пустой аргумент!");
         }
+        if (!users.containsKey(user.getId())) {
+            throw new ValidationException("Пользователь с ID=" + user.getId() + " не найден!");
+        }
+            if (isValidUser(user)) {
+                users.put(user.getId(), user);
+            }
+
         return user;
     }
 
-    private boolean isContainsUser(int id) {
-        return users.containsKey(id);
+    private boolean isValidUser(User user) {
+        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
+            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
+        }
+        return true;
     }
+
 }

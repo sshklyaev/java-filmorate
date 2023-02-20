@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class User {
-    @NotNull
     private Integer id;
     @Email
     @NotEmpty
@@ -16,8 +15,10 @@ public class User {
             message = "Неккоректный адресс электронной почты!")
     private String email;
     @NotBlank
+    @Pattern(regexp = "\\S*$")
     private String login;
     private String name;
     @NotNull
+    @PastOrPresent
     private LocalDate birthday;
 }

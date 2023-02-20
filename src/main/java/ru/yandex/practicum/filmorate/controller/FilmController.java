@@ -33,9 +33,10 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма с ID={}", currentId + 1);
-
+        if (isValidFilm(film)) {
             film.setId(++currentId);
             films.put(film.getId(), film);
+        }
 
         return film;
     }
@@ -43,17 +44,26 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) {
         log.info("Получен PUT-запрос к эндпоинту: '/films' на обновление фильма с ID={}", film.getId());
-        if (isContainsFilm(film.getId()) == true) {
-
-                films.put(film.getId(), film);
-                currentId++;
-
+        if (film.getId() == null) {
+            throw new ValidationException("Передан пустой аргумент!");
+        }
+        if (!films.containsKey(film.getId())) {
+            throw new ValidationException("Фильм с ID=" + film.getId() + " не найден!");
+        }
+        if (isValidFilm(film)) {
+            films.put(film.getId(), film);
         }
         return film;
+
+    }
+
+    private boolean isValidFilm(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
+        }
+
+        return true;
     }
 
 
-    private boolean isContainsFilm(int id) {
-        return films.containsKey(id);
-    }
 }

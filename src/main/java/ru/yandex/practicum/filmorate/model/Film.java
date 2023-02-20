@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class Film {
-    @NotNull
     private Integer id;
     @NotBlank
     private String name;
@@ -22,9 +21,9 @@ public class Film {
     @NotNull
     private String description;
     @NotNull
-    @DateTimeFormat(pattern="yyyy/MM/dd")
     private LocalDate releaseDate;
     @NotNull
+    @Positive
     private Integer duration;
 
 }
