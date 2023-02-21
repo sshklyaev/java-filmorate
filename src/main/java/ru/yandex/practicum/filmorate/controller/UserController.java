@@ -58,6 +58,9 @@ public class UserController {
         if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
             throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
         }
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         return true;
     }
 
