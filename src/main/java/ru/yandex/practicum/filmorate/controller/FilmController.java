@@ -17,14 +17,10 @@ import javax.validation.Valid;
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
-    private Map<Integer, Film> films;
-    private Integer currentId;
+    private Map<Integer, Film> films = new HashMap<>();
+    private Integer currentId = 1;
     private static final LocalDate AFTER_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    public FilmController() {
-        currentId = 1;
-        films = new HashMap<>();
-    }
 
     @GetMapping
     public List<Film> getFilms() {

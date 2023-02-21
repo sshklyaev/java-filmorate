@@ -18,13 +18,9 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
-    private Map<Integer, User> users;
-    private Integer currentId;
+    private Map<Integer, User> users = new HashMap<>();
+    private Integer currentId = 1;
 
-    public UserController() {
-        currentId = 1;
-        users = new HashMap<>();
-    }
 
     @GetMapping
     public List<User> getUsers() {
@@ -53,10 +49,9 @@ public class UserController {
         if (!users.containsKey(user.getId())) {
             throw new ValidationException("Пользователь с ID=" + user.getId() + " не найден!");
         }
-            if (isValidUser(user)) {
-                users.put(user.getId(), user);
-            }
-
+        if (isValidUser(user)) {
+            users.put(user.getId(), user);
+        }
         return user;
     }
 
