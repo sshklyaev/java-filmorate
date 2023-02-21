@@ -10,9 +10,7 @@ import java.time.LocalDate;
 public class User {
     private Integer id;
     @Email
-    @NotEmpty
-    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-            message = "Неккоректный адресс электронной почты!")
+    @NotBlank
     private String email;
     @NotBlank
     @Pattern(regexp = "\\S*$")
@@ -21,4 +19,12 @@ public class User {
     @NotNull
     @PastOrPresent
     private LocalDate birthday;
+
+    public User(Integer id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
 }

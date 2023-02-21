@@ -15,22 +15,24 @@ import javax.validation.Valid;
 
 @RestController
 @Slf4j
+@RequestMapping("/films")
 public class FilmController {
     private Map<Integer, Film> films;
     private Integer currentId;
+    private static final LocalDate AFTER_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     public FilmController() {
-        currentId = 0;
+        currentId = 1;
         films = new HashMap<>();
     }
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
 
 
-    @PostMapping(value = "/films")
+    @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма с ID={}", currentId + 1);
         if (isValidFilm(film)) {
@@ -41,7 +43,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping(value = "/films")
+    @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Получен PUT-запрос к эндпоинту: '/films' на обновление фильма с ID={}", film.getId());
         if (film.getId() == null) {
@@ -58,7 +60,7 @@ public class FilmController {
     }
 
     private boolean isValidFilm(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(AFTER_RELEASE_DATE)) {
             throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
         }
 

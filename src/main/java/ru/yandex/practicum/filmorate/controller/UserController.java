@@ -16,22 +16,23 @@ import java.util.Map;
 
 @RestController
 @Slf4j
+@RequestMapping("/users")
 public class UserController {
     private Map<Integer, User> users;
     private Integer currentId;
 
     public UserController() {
-        currentId = 0;
+        currentId = 1;
         users = new HashMap<>();
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
 
 
-    @PostMapping(value = "/users")
+    @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
         if (isValidUser(user)) {
@@ -42,8 +43,8 @@ public class UserController {
         return user;
     }
 
-    @ResponseBody
-    @PutMapping(value = "/users")
+
+    @PutMapping
     public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
         if (user.getId() == null) {
