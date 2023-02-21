@@ -32,7 +32,7 @@ public class FilmController {
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма с ID={}", currentId + 1);
         if (isValidFilm(film)) {
-            film.setId(++currentId);
+            film.setId(currentId++);
             films.put(film.getId(), film);
         }
 

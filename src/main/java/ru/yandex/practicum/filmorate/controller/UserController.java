@@ -32,10 +32,9 @@ public class UserController {
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
         if (isValidUser(user)) {
-            user.setId(++currentId);
+            user.setId(currentId++);
             users.put(user.getId(), user);
         }
-
         return user;
     }
 
