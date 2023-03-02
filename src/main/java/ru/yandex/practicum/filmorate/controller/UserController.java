@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import service.UserService;
+import storage.UserStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -15,26 +18,53 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Slf4j
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
-    private Map<Integer, User> users = new HashMap<>();
-    private Integer currentId = 1;
+    private UserStorage userStorage;
+    private UserService userService;
 
+    @Autowired
+    public UserController(UserStorage userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     @GetMapping
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return userStorage.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userStorage.getUserById(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.deleteFriend(id, friendId);
     }
 
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя с ID={}", currentId + 1);
-        if (isValidUser(user)) {
-            user.setId(currentId++);
-            users.put(user.getId(), user);
-        }
+        log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя");
+        user = userStorage.create(user);
         return user;
     }
 
@@ -42,26 +72,13 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
-        if (user.getId() == null) {
-            throw new ValidationException("Передан пустой аргумент!");
-        }
-        if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь с ID=" + user.getId() + " не найден!");
-        }
-        if (isValidUser(user)) {
-            users.put(user.getId(), user);
-        }
+        user = userStorage.update(user);
         return user;
     }
 
-    private boolean isValidUser(User user) {
-        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
-            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        return true;
+    @DeleteMapping("/{id}")
+    public User delete(@PathVariable Long id) {
+        log.info("Получен DELETE-запрос к эндпоинту: '/users' на удаление пользователя с ID={}", id);
+        return userStorage.delete(id);
     }
-
 }
