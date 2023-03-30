@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -68,9 +67,5 @@ public class UserController {
         return user;
     }
 
-    @DeleteMapping("/{id}")
-    public User delete(@PathVariable Long id) {
-        log.info("Получен DELETE-запрос к эндпоинту: '/users' на удаление пользователя с ID={}", id);
-        return userService.delete(id);
-    }
+
 }

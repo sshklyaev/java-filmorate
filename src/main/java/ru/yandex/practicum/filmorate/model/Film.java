@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -21,16 +20,18 @@ import java.util.Set;
 @NoArgsConstructor
 public class Film {
     private Long id;
-    @NotBlank
+    private Set<Long> likes = new HashSet<>();
+    @NotNull
+    private LocalDate releaseDate;
+    @NotBlank  @NotNull
     private String name;
     @Size(min = 1, max = 200)
     @NotNull
     private String description;
-    @NotNull
-    private LocalDate releaseDate;
-
     @Positive
     private Integer duration;
-    private Set<Long> likes = new HashSet<>();
+    private Set<Genre> genres;
+
+    private Mpa mpa;
 
 }
