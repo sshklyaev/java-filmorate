@@ -1,34 +1,32 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.Exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserService userService;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("FilmDbStorage") FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
     }
 
     public void addLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
         if (film != null) {
-            if (userStorage.getUserById(userId) != null) {
+            if (userService.getUserById(userId) != null) {
                 film.getLikes().add(userId);
             } else {
                 throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
@@ -82,7 +80,5 @@ public class FilmService {
     }
 
 
-    public Film delete(Long filmId) {
-         return filmStorage.delete(filmId);
-    }
+
 }

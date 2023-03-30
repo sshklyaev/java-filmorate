@@ -9,7 +9,6 @@ import java.util.*;
 
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -68,9 +67,4 @@ public class FilmController {
         filmService.deleteLike(id, userId);
     }
 
-    @DeleteMapping("/{id}")
-    public Film delete(@PathVariable Long id) {
-        log.info("Получен DELETE-запрос к эндпоинту: '/films' на удаление фильма с ID={}", id);
-        return filmService.delete(id);
-    }
 }
