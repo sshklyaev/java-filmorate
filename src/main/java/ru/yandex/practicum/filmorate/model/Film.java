@@ -21,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Film {
     private Long id;
+    private Set<Long> likes = new HashSet<>();
     @NotBlank
     private String name;
     @Size(min = 1, max = 200)
@@ -31,6 +32,8 @@ public class Film {
 
     @Positive
     private Integer duration;
-    private Set<Long> likes = new HashSet<>();
+    private Set<Genre> genres;
+
+    private Mpa mpa;
 
 }
